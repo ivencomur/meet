@@ -48,5 +48,3 @@ Feature 2: Show/Hide Event Details
 Scenario 1: Given an event is displayed in the list, When the user views the event element, Then the event's details section should be collapsed by default.
 
 Scenario 2: Given an event's details section is collapsed, When the user clicks on the "Show details" button for that event, Then the event's details section should expand to display its details.
-
-Scenario 3: Given an event's details section is currently expanded, When the user clicks on the "Hide details" button for that event, Then the event's details section should collapse.

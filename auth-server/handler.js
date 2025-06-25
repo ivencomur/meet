@@ -2,11 +2,15 @@
 
 const { google } = require("googleapis");
 const calendar = google.calendar("v3");
+
 const SCOPES = [
   "https://www.googleapis.com/auth/calendar.events.public.readonly",
 ];
+
 const { CLIENT_SECRET, CLIENT_ID, CALENDAR_ID } = process.env;
-const redirect_uris = ["https://ivans-events.vercel.app"];
+const redirect_uris = [
+    "https://ivans-events.vercel.app"
+];
 
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,
@@ -14,12 +18,12 @@ const oAuth2Client = new google.auth.OAuth2(
   redirect_uris[0]
 );
 
-async function getAuthURL() {
+module.exports.getAuthURL = async () => {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",
     scope: SCOPES,
   });
-  let message = "deploy on sunday";
+
   return {
     statusCode: 200,
     headers: {
@@ -28,36 +32,80 @@ async function getAuthURL() {
     },
     body: JSON.stringify({
       authUrl,
-      message,
     }),
   };
-}
+};
 
-async function getCalendarEvents() {
-  console.log("get calendar events was called");
-  let message = "called calendar events"
-  let calendar_events = []
+module.exports.getCalendarEvents = async (event) => {
   try {
-    
-      //TODO: call google api to retreive calend events
-  } catch (error) {
-    console.error("Error retriving calendar events")
-  }
-  return {
-    statusCode: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Credentials": true,
-    },
-    body: JSON.stringify({
-      message,
-      calendar_events
-    }),
-  };
-}
+    const code = decodeURIComponent(event.queryStringParameters.code);
 
-//make functions able to be called
-module.exports = {
-  getAuthURL,
-  getCalendarEvents,
+    const { tokens } = await oAuth2Client.getToken(code);
+    oAuth2Client.setCredentials(tokens);
+
+    const response = await calendar.events.list({
+      calendarId: CALENDAR_ID,
+      auth: oAuth2Client,
+      timeMin: new Date().toISOString(),
+      maxResults: 10,
+      singleEvents: true,
+      orderBy: "startTime",
+    });
+
+    const calendar_events = response.data.items;
+
+    return {
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": true,
+      },
+      body: JSON.stringify({
+        message: "Successfully retrieved calendar events.",
+        events: calendar_events,
+      }),
+    };
+  } catch (error) {
+    console.error("Error retrieving calendar events:", error);
+    return {
+      statusCode: 500,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": true,
+      },
+      body: JSON.stringify({
+        message: "Failed to retrieve calendar events.",
+        error: error.message,
+      }),
+    };
+  }
+};
+module.exports.getAccessToken = async (event) => {
+  const code = decodeURIComponent(`${event.pathParameters.code}`);
+
+
+ return new Promise((resolve, reject) => {
+  oAuth2Client.getToken(code, (error, response) => {
+     if (error) {
+       return reject(error);
+     }
+     return resolve(response);
+   });
+ })
+   .then((results) => {
+     return {
+       statusCode: 200,
+       headers: {
+         'Access-Control-Allow-Origin': '*',
+         'Access-Control-Allow-Credentials': true,
+       },
+       body: JSON.stringify(results),
+     };
+   })
+   .catch((error) => {
+    return {
+       statusCode: 500,
+       body: JSON.stringify(error),
+     };
+   });
 };

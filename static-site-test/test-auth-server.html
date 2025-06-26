@@ -24,7 +24,7 @@
       <p>Click the button below to get your OAuth URL.</p>
       <button id="getAuthUrlButton">Get OAuth URL</button>
       <p id="result"></p>
-      <a id="authURL" href target="_blank">Click to authorize</a>
+      <a id="authURL" href="" target="_blank">Click to authorize</a>
 
       <h4>Step 2: Get your code and exchange for an access token</h4>
       <p>
@@ -40,48 +40,8 @@
       <p id="accessToken"></p>
     </main>
 
-    <script type="text/javascript">
-      const getAuthUrlButton = document.getElementById("getAuthUrlButton");
-      const resultElement = document.getElementById("result");
-      const resultLink = document.getElementById("authURL");
-
-      const getAuthURL =
-        "arn:aws:lambda:us-east-1:072071232799:function:auth-server-dev-getAuthURL";
-
-      getAuthUrlButton.onclick = function () {
-        fetch(getAuthURL)
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (json) {
-            const result = JSON.stringify(json);
-
-            const { authUrl } = JSON.parse(result);
-
-            resultElement.innerText = result;
-            resultLink.href = authUrl;
-          });
-      };
-      const codeValue = document.getElementById("code");
-      const getAccessToken = document.getElementById("getToken");
-      const accessTokenElement = document.getElementById("accessToken");
-      const getToken =
-        "arn:aws:lambda:us-east-1:function:auth-server-dev-getAccessToken";
-
-      getAccessToken.onclick = function () {
-        let code = codeValue.value;
-        if (decodeURIComponent(code) === code) {
-          code = encodeURIComponent(codeValue.value);
-        }
-        const getTokenRequest = getToken + "/" + code;
-        fetch(getTokenRequest)
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (json) {
-            accessTokenElement.innerText = JSON.stringify(json);
-          });
-      };
+    <script type="text/javascript" src="script.js">
+      
     </script>
   </body>
 </html>

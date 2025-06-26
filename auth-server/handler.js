@@ -7,7 +7,6 @@ const SCOPES = [
   "https://www.googleapis.com/auth/calendar.events.public.readonly",
 ];
 
-// credentials and calendar ID are loaded from environment variables
 const { CLIENT_SECRET, CLIENT_ID, CALENDAR_ID } = process.env;
 const redirect_uris = [
     "https://ivans-events.vercel.app"
@@ -19,7 +18,6 @@ const oAuth2Client = new google.auth.OAuth2(
   redirect_uris[0]
 );
 
-
 module.exports.getAuthURL = async () => {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",
@@ -30,7 +28,6 @@ module.exports.getAuthURL = async () => {
     statusCode: 200,
     headers: {
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Credentials": true,
     },
     body: JSON.stringify({
       authUrl,
@@ -38,35 +35,40 @@ module.exports.getAuthURL = async () => {
   };
 };
 
-
 module.exports.getAccessToken = async (event) => {
-  try {
-    
-    const code = decodeURIComponent(event.queryStringParameters.code);
+  return new Promise((resolve, reject) => {
+    const code = decodeURIComponent(event.pathParameters.code);
 
-    const { tokens } = await oAuth2Client.getToken(code);
-
+    oAuth2Client.getToken(code, (error, response) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(response);
+    });
+  })
+  .then((results) => {
     return {
       statusCode: 200,
       headers: {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true,
       },
-      body: JSON.stringify(tokens),
+      body: JSON.stringify(results),
     };
-  } catch (error) {
-    console.error("Error retrieving access token:", error);
+  })
+  .catch((error) => {
     return {
       statusCode: 500,
+      
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
       body: JSON.stringify(error),
     };
-  }
+  });
 };
-
 
 module.exports.getCalendarEvents = async (event) => {
   return new Promise((resolve, reject) => {
-    
     const access_token = decodeURIComponent(event.pathParameters.access_token);
     oAuth2Client.setCredentials({ access_token });
     
@@ -75,7 +77,6 @@ module.exports.getCalendarEvents = async (event) => {
         calendarId: CALENDAR_ID,
         auth: oAuth2Client,
         timeMin: new Date().toISOString(),
-        maxResults: 10,
         singleEvents: true,
         orderBy: "startTime",
       },
@@ -92,17 +93,19 @@ module.exports.getCalendarEvents = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true,
+        "Access-Control-Allow-Origin": "*",
       },
-      body: JSON.stringify({ events: response.data.items }),
+      body: JSON.stringify({ events: results.data.items }),
     };
   })
   .catch((error) => {
-    console.error("Error retrieving calendar events:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify(error.message),
+     
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify(error),
     };
   });
 };

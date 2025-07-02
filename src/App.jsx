@@ -23,12 +23,12 @@ const App = () => {
     };
 
     fetchData();
-  }, [currentCity, currentNOE]); // This useEffect hook depends now on currentNOE and CurrentCity
+  }, [currentCity, currentNOE]);
 
   return (
     <div className="App">
       <h1>Meet App</h1>
-      <CitySearch allLocations={allLocations} setCurrentCity={setCurrentCity} />      
+      <CitySearch allLocations={allLocations} setCurrentCity={setCurrentCity} />
       <NumberOfEvents setCurrentNOE={setCurrentNOE} />
       <EventList events={events} />
     </div>

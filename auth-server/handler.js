@@ -26,9 +26,6 @@ module.exports.getAuthURL = async () => {
 
   return {
     statusCode: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-    },
     body: JSON.stringify({
       authUrl,
     }),
@@ -48,12 +45,11 @@ module.exports.getAccessToken = async (event) => {
   })
   .then((results) => {
     return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify(results),
-    };
+    statusCode: 200,
+    body: JSON.stringify({
+      authUrl,
+    }),
+  };
   })
   .catch((error) => {
     return {
@@ -91,12 +87,11 @@ module.exports.getCalendarEvents = async (event) => {
   })
   .then((results) => {
     return {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-      body: JSON.stringify({ events: results.data.items }),
-    };
+    statusCode: 200,
+    body: JSON.stringify({
+      authUrl,
+    }),
+  };
   })
   .catch((error) => {
     return {

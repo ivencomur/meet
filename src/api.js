@@ -1,5 +1,7 @@
+// src/api.js
 import mockData from './mock-data';
 
+// --- Helper function to remove the authorization code from the URL ---
 const removeQuery = () => {
   let newurl;
   if (window.history.pushState && window.location.pathname) {
@@ -12,11 +14,13 @@ const removeQuery = () => {
   }
 };
 
+// --- Helper function to get the token from your Lambda function ---
 const getToken = async (code) => {
   try {
     const encodeCode = encodeURIComponent(code);
-    const response = await fetch(      
-      'https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/get-auth-url' + encodeCode
+    // This is the correct API Gateway endpoint for getting the token
+    const response = await fetch(
+      'https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/token/' + encodeCode
     );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
@@ -31,13 +35,15 @@ const getToken = async (code) => {
   }
 };
 
+// --- This function checks the validity of an existing access token ---
 const checkToken = async (accessToken) => {
   const response = await fetch(
-    `https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/token`
+    `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${accessToken}`
   );
   const result = await response.json();
   return result;
 };
+
 
 export const getEvents = async () => {
   if (window.location.href.startsWith("http://localhost")) {
@@ -48,8 +54,9 @@ export const getEvents = async () => {
 
   if (token) {
     removeQuery();
-    const url =       
-      "https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/get-calendar-events" + token;
+   
+    const url = 
+      "https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/get-calendar-events/" + token;
     const response = await fetch(url);
     const result = await response.json();
     if (result) {
@@ -59,11 +66,13 @@ export const getEvents = async () => {
   return null;
 };
 
+
 export const extractLocations = (events) => {
   const extractedLocations = events.map((event) => event.location);
   const locations = [...new Set(extractedLocations)];
   return locations;
 };
+
 
 export const getAccessToken = async () => {
   const accessToken = localStorage.getItem('access_token');
@@ -74,8 +83,9 @@ export const getAccessToken = async () => {
     const searchParams = new URLSearchParams(window.location.search);
     const code = await searchParams.get("code");
     if (!code) {
-      const response = await fetch(        
-        "https://hfdv4xdshp3lvsxv6ktelz2buy0slssn.lambda-url.us-east-1.on.aws"
+     
+      const response = await fetch(
+        "https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/get-auth-url"
       );
       const result = await response.json();
       const { authUrl } = result;

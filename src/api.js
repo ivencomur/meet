@@ -16,7 +16,7 @@ const getToken = async (code) => {
   try {
     const encodeCode = encodeURIComponent(code);
     const response = await fetch(      
-      'https://gppssjeu5d5rud3pa4flehawri0cenhf.lambda-url.us-east-1.on.aws/' + encodeCode
+      'https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/get-auth-url' + encodeCode
     );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
@@ -33,7 +33,7 @@ const getToken = async (code) => {
 
 const checkToken = async (accessToken) => {
   const response = await fetch(
-    `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${accessToken}`
+    `https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/token/`
   );
   const result = await response.json();
   return result;
@@ -49,7 +49,7 @@ export const getEvents = async () => {
   if (token) {
     removeQuery();
     const url =       
-      "https://q2aqm4j7qrvl32zaxutpwhljmq0lucmr.lambda-url.us-east-1.on.aws/" + token;
+      "https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/get-calendar-events/" + token;
     const response = await fetch(url);
     const result = await response.json();
     if (result) {

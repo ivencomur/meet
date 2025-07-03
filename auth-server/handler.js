@@ -1,16 +1,11 @@
+// auth-server/handler.js
 "use strict";
 
 const { google } = require("googleapis");
 const calendar = google.calendar("v3");
-
-const SCOPES = [
-  "https://www.googleapis.com/auth/calendar.events.public.readonly",
-];
-
+const SCOPES = ["https://www.googleapis.com/auth/calendar.events.public.readonly"];
 const { CLIENT_SECRET, CLIENT_ID, CALENDAR_ID } = process.env;
-const redirect_uris = [
-    "https://ivans-events.vercel.app"
-];
+const redirect_uris = ["https://ivans-events.vercel.app"];
 
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,
@@ -44,20 +39,16 @@ module.exports.getAccessToken = async (event) => {
     });
   })
   .then((results) => {
+    // FIX: This function should return the token object ('results'), not 'authUrl'.
     return {
-    statusCode: 200,
-    body: JSON.stringify({
-      authUrl,
-    }),
-  };
+      statusCode: 200,
+      body: JSON.stringify(results),
+    };
   })
   .catch((error) => {
     return {
       statusCode: 500,
-      
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
+      // FIX: Removed manual CORS headers to let API Gateway handle it.
       body: JSON.stringify(error),
     };
   });
@@ -86,20 +77,16 @@ module.exports.getCalendarEvents = async (event) => {
     );
   })
   .then((results) => {
+    // FIX: This function should return the list of events, which are in results.data.items.
     return {
-    statusCode: 200,
-    body: JSON.stringify({
-      authUrl,
-    }),
-  };
+      statusCode: 200,
+      body: JSON.stringify({ events: results.data.items }),
+    };
   })
   .catch((error) => {
     return {
       statusCode: 500,
-     
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
+      // FIX: Removed manual CORS headers to let API Gateway handle it.
       body: JSON.stringify(error),
     };
   });

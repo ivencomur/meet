@@ -1,7 +1,6 @@
 // src/api.js
 import mockData from './mock-data';
 
-// --- Helper function to remove the authorization code from the URL ---
 const removeQuery = () => {
   let newurl;
   if (window.history.pushState && window.location.pathname) {
@@ -17,9 +16,8 @@ const removeQuery = () => {
 const getToken = async (code) => {
   try {
     const encodeCode = encodeURIComponent(code);
-   
     const response = await fetch(
-      'https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/token' + encodeCode
+      'https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/token/' + encodeCode // FIX: Added missing slash
     );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
@@ -42,7 +40,6 @@ const checkToken = async (accessToken) => {
   return result;
 };
 
-
 export const getEvents = async () => {
   if (window.location.href.startsWith("http://localhost")) {
     return mockData;
@@ -52,9 +49,8 @@ export const getEvents = async () => {
 
   if (token) {
     removeQuery();
-   
     const url = 
-      "https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/get-calendar-events" + token;
+      "https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/get-calendar-events/" + token; // FIX: Added missing slash
     const response = await fetch(url);
     const result = await response.json();
     if (result) {
@@ -64,13 +60,11 @@ export const getEvents = async () => {
   return null;
 };
 
-
 export const extractLocations = (events) => {
   const extractedLocations = events.map((event) => event.location);
   const locations = [...new Set(extractedLocations)];
   return locations;
 };
-
 
 export const getAccessToken = async () => {
   const accessToken = localStorage.getItem('access_token');
@@ -81,9 +75,8 @@ export const getAccessToken = async () => {
     const searchParams = new URLSearchParams(window.location.search);
     const code = await searchParams.get("code");
     if (!code) {
-     
       const response = await fetch(
-        "https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/get-auth-url"
+        "https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/get-auth-url" // FIX: Using correct API Gateway URL
       );
       const result = await response.json();
       const { authUrl } = result;

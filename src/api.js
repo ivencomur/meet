@@ -20,7 +20,7 @@ const getToken = async (code) => {
     const encodeCode = encodeURIComponent(code);
     // This is the correct API Gateway endpoint for getting the token
     const response = await fetch(
-      'https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/token/' + encodeCode
+      'https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/token' + encodeCode
     );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
@@ -56,7 +56,7 @@ export const getEvents = async () => {
     removeQuery();
    
     const url = 
-      "https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/get-calendar-events/" + token;
+      "https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/get-calendar-events" + token;
     const response = await fetch(url);
     const result = await response.json();
     if (result) {

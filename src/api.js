@@ -75,7 +75,7 @@ export const getAccessToken = async () => {
     const code = await searchParams.get("code");
     if (!code) {
       const response = await fetch(        
-        "https://hfdv4xdshp3lvsxv6ktelz2buy0slssn.lambda-url.us-east-1.on.aws/"
+        "https://hfdv4xdshp3lvsxv6ktelz2buy0slssn.lambda-url.us-east-1.on.aws"
       );
       const result = await response.json();
       const { authUrl } = result;

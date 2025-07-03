@@ -1,4 +1,3 @@
-// setupTests.js
 import '@testing-library/jest-dom';
 
 const MESSAGES_TO_IGNORE = [

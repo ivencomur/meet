@@ -1,4 +1,4 @@
-// auth-server/handler.js
+
 "use strict";
 
 const { google } = require("googleapis");
@@ -39,7 +39,7 @@ module.exports.getAccessToken = async (event) => {
     });
   })
   .then((results) => {
-    // FIX: This function should return the token object ('results'), not 'authUrl'.
+   
     return {
       statusCode: 200,
       body: JSON.stringify(results),
@@ -48,7 +48,7 @@ module.exports.getAccessToken = async (event) => {
   .catch((error) => {
     return {
       statusCode: 500,
-      // FIX: Removed manual CORS headers to let API Gateway handle it.
+     
       body: JSON.stringify(error),
     };
   });
@@ -77,7 +77,7 @@ module.exports.getCalendarEvents = async (event) => {
     );
   })
   .then((results) => {
-    // FIX: This function should return the list of events, which are in results.data.items.
+   
     return {
       statusCode: 200,
       body: JSON.stringify({ events: results.data.items }),
@@ -86,7 +86,7 @@ module.exports.getCalendarEvents = async (event) => {
   .catch((error) => {
     return {
       statusCode: 500,
-      // FIX: Removed manual CORS headers to let API Gateway handle it.
+
       body: JSON.stringify(error),
     };
   });

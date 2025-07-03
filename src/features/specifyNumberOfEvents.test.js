@@ -17,14 +17,15 @@ defineFeature(feature, test => {
     when('the event list is displayed', async () => {
       AppDOM = AppComponent.container.firstChild;
       await waitFor(() => {
-        const eventList = within(AppDOM).queryAllByRole('listitem');
-        expect(eventList[0]).toBeTruthy();
+        within(AppDOM).queryAllByRole('listitem');
       });
     });
 
-    then('the default number of events shown should be 32.', () => {
-      const eventList = within(AppDOM).queryAllByRole('listitem');
-      expect(eventList.length).toEqual(32);
+    then('the default number of events shown should be 32.', async () => {
+      await waitFor(() => {
+        const eventList = within(AppDOM).queryAllByRole('listitem');
+        expect(eventList.length).toEqual(32);
+      });
     });
   });
 

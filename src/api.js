@@ -33,7 +33,7 @@ const getToken = async (code) => {
 
 const checkToken = async (accessToken) => {
   const response = await fetch(
-    `https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/token/`
+    `https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/token`
   );
   const result = await response.json();
   return result;
@@ -49,7 +49,7 @@ export const getEvents = async () => {
   if (token) {
     removeQuery();
     const url =       
-      "https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/get-calendar-events/" + token;
+      "https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/get-calendar-events" + token;
     const response = await fetch(url);
     const result = await response.json();
     if (result) {

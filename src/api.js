@@ -14,11 +14,10 @@ const removeQuery = () => {
   }
 };
 
-// --- Helper function to get the token from your Lambda function ---
 const getToken = async (code) => {
   try {
     const encodeCode = encodeURIComponent(code);
-    // This is the correct API Gateway endpoint for getting the token
+   
     const response = await fetch(
       'https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/token' + encodeCode
     );
@@ -35,7 +34,6 @@ const getToken = async (code) => {
   }
 };
 
-// --- This function checks the validity of an existing access token ---
 const checkToken = async (accessToken) => {
   const response = await fetch(
     `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${accessToken}`

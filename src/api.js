@@ -1,4 +1,4 @@
-
+// src/api.js
 import mockData from './mock-data';
 
 const removeQuery = () => {
@@ -32,7 +32,6 @@ export const getEvents = async () => {
   if (window.location.href.startsWith("http://localhost")) {
     return mockData;
   }
-
   const token = await getAccessToken();
   if (token) {
     removeQuery();
@@ -47,7 +46,6 @@ export const getEvents = async () => {
 export const getAccessToken = async () => {
   const accessToken = localStorage.getItem('access_token');
   const tokenCheck = accessToken && (await checkToken(accessToken));
-
   if (!accessToken || tokenCheck.error) {
     await localStorage.removeItem("access_token");
     const searchParams = new URLSearchParams(window.location.search);
@@ -64,7 +62,7 @@ export const getAccessToken = async () => {
 };
 
 export const extractLocations = (events) => {
-  const extractedLocations = events.map((event) => event.location);
-  const locations = [...new Set(extractedLocations)];
-  return locations;
+    const extractedLocations = events.map((event) => event.location);
+    const locations = [...new Set(extractedLocations)];
+    return locations;
 };

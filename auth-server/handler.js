@@ -21,6 +21,11 @@ module.exports.getAuthURL = async () => {
 
   return {
     statusCode: 200,
+    headers: {
+        "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
+        "Access-Control-Allow-Credentials" : true, // Required for cookies, authorization headers with HTTPS
+        "Access-Control-Allow-Methods":"GET,POST,OPTIONS"
+      },
     body: JSON.stringify({
       authUrl,
     }),
@@ -29,7 +34,9 @@ module.exports.getAuthURL = async () => {
 
 module.exports.getAccessToken = async (event) => {
   return new Promise((resolve, reject) => {
-    const code = decodeURIComponent(event.pathParameters.code);
+    console.log(event.rawPath)
+    //rawPath = "/dev/api/token/abc123"
+    const code = decodeURIComponent(event.rawPath.split('/')[4]);
 
     oAuth2Client.getToken(code, (error, response) => {
       if (error) {
@@ -42,6 +49,11 @@ module.exports.getAccessToken = async (event) => {
    
     return {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
+        "Access-Control-Allow-Credentials" : true, // Required for cookies, authorization headers with HTTPS
+        "Access-Control-Allow-Methods":"GET,POST,OPTIONS"
+      },
       body: JSON.stringify(results),
     };
   })
@@ -80,6 +92,11 @@ module.exports.getCalendarEvents = async (event) => {
    
     return {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
+        "Access-Control-Allow-Credentials" : true, // Required for cookies, authorization headers with HTTPS
+        "Access-Control-Allow-Methods":"GET,POST,OPTIONS"
+      },
       body: JSON.stringify({ events: results.data.items }),
     };
   })

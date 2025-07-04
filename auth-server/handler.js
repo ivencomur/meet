@@ -1,3 +1,4 @@
+// auth-server/handler.js
 "use strict";
 
 const { google } = require("googleapis");
@@ -20,7 +21,9 @@ module.exports.getAuthURL = async () => {
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ authUrl }),
+    body: JSON.stringify({
+      authUrl,
+    }),
   };
 };
 
@@ -33,17 +36,19 @@ module.exports.getAccessToken = async (event) => {
       }
       return resolve(response);
     });
-  }).then((results) => {
-    return {
-      statusCode: 200,
-      body: JSON.stringify(results),
-    };
-  }).catch((error) => {
-    return {
-      statusCode: 500,
-      body: JSON.stringify(error),
-    };
-  });
+  })
+    .then((response) => {
+      return {
+        statusCode: 200,
+        body: JSON.stringify(response),
+      };
+    })
+    .catch((error) => {
+      return {
+        statusCode: 500,
+        body: JSON.stringify(error),
+      };
+    });
 };
 
 module.exports.getCalendarEvents = async (event) => {
@@ -66,15 +71,17 @@ module.exports.getCalendarEvents = async (event) => {
         }
       }
     );
-  }).then((results) => {
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ events: results.data.items }),
-    };
-  }).catch((error) => {
-    return {
-      statusCode: 500,
-      body: JSON.stringify(error),
-    };
-  });
+  })
+    .then((results) => {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ events: results.data.items }),
+      };
+    })
+    .catch((error) => {
+      return {
+        statusCode: 500,
+        body: JSON.stringify(error),
+      };
+    });
 };

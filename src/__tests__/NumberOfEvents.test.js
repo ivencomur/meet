@@ -1,4 +1,4 @@
-// src/__tests__/NumberOfEvents.test.js
+
 
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -24,7 +24,7 @@ describe('<NumberOfEvents /> component', () => {
   test('value of input field changes when user types', async () => {
     const user = userEvent.setup();
     const numberTextbox = NumberOfEventsComponent.queryByRole('textbox');
-    // To Simulate clearing the input and typing a new number
+  
     await user.clear(numberTextbox);
     await user.type(numberTextbox, "10");
     expect(numberTextbox).toHaveValue("10");

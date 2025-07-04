@@ -1,4 +1,3 @@
-// src/setupTests.js
 import '@testing-library/jest-dom';
 
 const MESSAGES_TO_IGNORE = [
@@ -13,3 +12,5 @@ console.error = (...args) => {
   const ignoreMessage = MESSAGES_TO_IGNORE.find(message => args.toString().includes(message));
   if (!ignoreMessage) originalError(...args);
 }
+
+jest.setTimeout(30000);

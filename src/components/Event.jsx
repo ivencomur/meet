@@ -2,7 +2,7 @@ import { useState } from "react";
 
 const Event = ({ event }) => {
   const [showDetails, setShowDetails] = useState(false);
-  // To toggle the Show details button on/off (flase/true) and vice-versa
+  
   const handleToggleDetails = () => {
     setShowDetails(!showDetails);
   };

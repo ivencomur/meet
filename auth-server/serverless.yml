@@ -1,3 +1,4 @@
+# auth-server/serverless.yml
 service: auth-server
 
 provider:
@@ -9,6 +10,7 @@ provider:
     CLIENT_ID: ${file(config.json):CLIENT_ID}
     CLIENT_SECRET: ${file(config.json):CLIENT_SECRET}
     CALENDAR_ID: ${file(config.json):CALENDAR_ID}
+    
 functions:
   getAuthURL:
     handler: handler.getAuthURL
@@ -16,7 +18,14 @@ functions:
       - http:
           path: api/get-auth-url
           method: get
-          cors: true
+          cors: # Explicit CORS configuration
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
 
   getAccessToken:
     handler: handler.getAccessToken
@@ -24,15 +33,26 @@ functions:
       - http:
           path: api/token/{code}
           method: get
-          cors: true
-         
+          cors: # Explicit CORS configuration
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            
   getCalendarEvents:
     handler: handler.getCalendarEvents
     events:
       - http:
           path: api/get-calendar-events/{access_token}
           method: get
-          cors: true
-          
-  
-         
+          cors: # Explicit CORS configuration
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token

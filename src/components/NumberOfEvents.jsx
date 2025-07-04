@@ -6,7 +6,7 @@ const NumberOfEvents = ({ setCurrentNOE }) => {
 
   const handleInputChange = (event) => {
     const value = event.target.value;
-    // Basic validation
+
     if (isNaN(value) || value < 0) {
       setNumber(0); 
       setCurrentNOE(0);

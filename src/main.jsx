@@ -8,9 +8,6 @@ import * as atatus from 'atatus-spa';
 
 atatus.config('b5c73e4a23fa47928d9bdce24bd2a7fe').install();
 
-
-atatus.notify(new Error('Test Atatus Setup'));
-
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <App />

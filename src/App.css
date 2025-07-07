@@ -1,4 +1,4 @@
-/* Global Resets and Box Sizing */
+
 *,
 *::before,
 *::after {
@@ -9,7 +9,7 @@
 
 /* Body and Root Styles */
 body {
-  font-family: "Helvetica Neue", Arial, sans-serif; /* A fallback for the custom font */
+  font-family: "Helvetica Neue", Arial, sans-serif; 
   font-size: 18px;
   line-height: 1.6;
   background-color: #f9f9f9;
@@ -20,7 +20,7 @@ body {
   min-height: 100vh;
 }
 
-/* Main App Container */
+/
 #root {
   width: 100%;
   max-width: 1200px;
@@ -31,7 +31,7 @@ body {
   text-align: center;
 }
 
-/* Typography */
+
 h1, h2, h3, h4, h5, h6 {
   font-weight: bold;
   margin-top: 1.5em;
@@ -75,7 +75,7 @@ a:hover {
   text-decoration: underline;
 }
 
-/* UI Components */
+
 .card {
   padding: 2em;
   margin-top: 2rem;
@@ -103,7 +103,7 @@ button:hover {
   transform: scale(1.05);
 }
 
-/* Lists */
+
 ul {
   list-style-type: disc;
   margin-left: 20px;
@@ -144,7 +144,7 @@ pre {
   text-align: left;
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
   body {
     font-size: 16px;

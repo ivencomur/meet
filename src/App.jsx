@@ -14,7 +14,7 @@
       const [allLocations, setAllLocations] = useState([]);
       const [currentCity, setCurrentCity] = useState("See all cities");
       const [infoAlert, setInfoAlert] = useState("");
-      // New state for the error alert:
+      // New state for the error alert
       const [errorAlert, setErrorAlert] = useState(""); 
 
       useEffect(() => {
@@ -63,8 +63,7 @@
           />
           <NumberOfEvents 
             setCurrentNOE={setCurrentNOE}
-            // New setter function to be passed:
-            setErrorAlert={setErrorAlert} 
+            setErrorAlert={setErrorAlert} // <-- Pass the new setter function
           />
           <EventList events={events} />
         </div>

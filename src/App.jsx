@@ -1,62 +1,88 @@
-    import { Component } from 'react';
+import { Component } from 'react';
+import './App.css';
+import EventList from './components/EventList';
+import CitySearch from './components/CitySearch';
+import NumberOfEvents from './components/NumberOfEvents';
+import { getEvents, extractLocations } from './api';
+import { InfoAlert, ErrorAlert, WarningAlert } from './components/Alert';
 
-    class Alert extends Component {
-      constructor(props) {
-        super(props);
-        this.color = null;
-        this.bgColor = null;
-      }
+class App extends Component {
+  state = {
+    events: [],
+    locations: [],
+    currentCity: 'See all cities',
+    currentNOE: 32,
+    infoAlert: '',
+    errorAlert: '',
+    warningAlert: '',
+  };
 
-      getStyle = () => {
-        return {
-          color: this.color,
-          backgroundColor: this.bgColor,
-          borderWidth: "2px",
-          borderStyle: "solid",
-          fontWeight: "bolder",
-          borderRadius: "7px",
-          borderColor: this.color,
-          textAlign: "center",
-          fontSize: "12px",
-          margin: "10px 0",
-          padding: "10px"
-        };
-      }
+  componentDidMount() {
+    this.fetchData();
+    window.addEventListener('online', this.checkOnlineStatus);
+  }
 
-      render() {
-        return (
-          <div className="Alert">
-            <p style={this.getStyle()}>{this.props.text}</p>
-          </div>
-        );
-      }
+  componentWillUnmount() {
+    window.removeEventListener('online', this.checkOnlineStatus);
+  }
+
+  checkOnlineStatus = () => {
+    if (navigator.onLine) {
+      this.setState({ warningAlert: '' });
+    } else {
+      this.setState({ warningAlert: 'You are offline! The displayed data may be from your last online session.' });
     }
+    this.fetchData();
+  };
 
-    class InfoAlert extends Alert {
-      constructor(props) {
-        super(props);
-        this.color = 'rgb(0, 0, 255)';
-        this.bgColor = 'rgb(220, 220, 255)';
-      }
+  fetchData = async () => {
+    const allEvents = await getEvents();
+    const filteredEvents =
+      this.state.currentCity === 'See all cities'
+        ? allEvents
+        : allEvents.filter((event) => event.location === this.state.currentCity);
+    this.setState({
+      events: filteredEvents.slice(0, this.state.currentNOE),
+      locations: extractLocations(allEvents),
+    });
+
+    if (!navigator.onLine) {
+      this.setState({ warningAlert: 'You are offline! The displayed data may be from your last online session.' });
+    } else {
+      this.setState({ warningAlert: '' });
     }
+  };
 
-    class ErrorAlert extends Alert {
-      constructor(props) {
-        super(props);
-        this.color = 'rgb(255, 0, 0)';
-        this.bgColor = 'rgb(255, 220, 220)';
-      }
-    }
+  setCurrentCity = (city) => {
+    this.setState({ currentCity: city }, this.fetchData);
+  };
 
-    // New WarningAlert subclass
-    class WarningAlert extends Alert {
-      constructor(props) {
-        super(props);
-        this.color = 'rgb(255, 165, 0)';
-        this.bgColor = 'rgb(255, 248, 220)';
-      }
-    }
+  setCurrentNOE = (number) => {
+    this.setState({ currentNOE: number }, this.fetchData);
+  };
 
-    // Update export with WarningAlert
-    export { InfoAlert, ErrorAlert, WarningAlert };
-    
+  render() {
+    // eslint-disable-next-line no-unused-vars
+    const { events, locations, currentNOE, infoAlert, errorAlert, warningAlert } = this.state;
+    return (
+      <div className="App">
+        <h1>Meet App</h1>
+        {infoAlert && <InfoAlert text={infoAlert} />}
+        {errorAlert && <ErrorAlert text={errorAlert} />}
+        {warningAlert && <WarningAlert text={warningAlert} />}
+        <CitySearch
+          allLocations={locations}
+          setCurrentCity={this.setCurrentCity}
+          setInfoAlert={(text) => this.setState({ infoAlert: text })}
+        />
+        <NumberOfEvents
+          setCurrentNOE={this.setCurrentNOE}
+          setErrorAlert={(text) => this.setState({ errorAlert: text })}
+        />
+        <EventList events={events} />
+      </div>
+    );
+  }
+}
+
+export default App;

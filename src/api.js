@@ -69,26 +69,29 @@ export const getAccessToken = async () => {
 };
 
 export const getEvents = async () => {
+  // Use mock data when running locally
   if (window.location.href.startsWith("http://localhost")) {
     return mockData;
   }
-  
-  if (window.location.href.includes("github.io")) {
-    return mockData;
+
+  // If offline, try to retrieve events from local storage
+  if (!navigator.onLine) {
+    const events = localStorage.getItem("lastEvents");
+    return events ? JSON.parse(events) : [];
   }
 
   const token = await getAccessToken();
+
   if (token) {
     removeQuery();
     const url = "https://tllamx3mtc.execute-api.us-east-1.amazonaws.com/dev/api/get-calendar-events/" + token;
-    try {
-      const response = await fetch(url);
-      const result = await response.json();
-      return result ? result.events : null;
-    } catch (error) {
-      console.error("Failed to fetch events:", error);
-      return null;
-    }
+    const response = await fetch(url);
+    const result = await response.json();
+    if (result) {
+      // Save fetched events to local storage
+      localStorage.setItem("lastEvents", JSON.stringify(result.events));
+      return result.events;
+    } else return null;
   }
   return null;
 };

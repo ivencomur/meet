@@ -1,74 +1,88 @@
-    import { useState, useEffect } from 'react';
-    import CitySearch from './components/CitySearch';
-    import EventList from './components/EventList';
-    import NumberOfEvents from './components/NumberOfEvents';
-    import { getEvents, extractLocations } from './api';
-    // ErrorAlert is imported:
-    import { InfoAlert, ErrorAlert } from './components/Alert'; 
+import { Component } from 'react';
+import './App.css';
+import EventList from './components/EventList';
+import CitySearch from './components/CitySearch';
+import NumberOfEvents from './components/NumberOfEvents';
+import { getEvents, extractLocations } from './api';
+import { InfoAlert, ErrorAlert, WarningAlert } from './components/Alert';
 
-    import './App.css';
+class App extends Component {
+  state = {
+    events: [],
+    locations: [],
+    currentCity: 'See all cities',
+    currentNOE: 32,
+    infoAlert: '',
+    errorAlert: '',
+    warningAlert: '',
+  };
 
-    function App() {
-      const [events, setEvents] = useState([]);
-      const [currentNOE, setCurrentNOE] = useState(32);
-      const [allLocations, setAllLocations] = useState([]);
-      const [currentCity, setCurrentCity] = useState("See all cities");
-      const [infoAlert, setInfoAlert] = useState("");
-      // New state for the error alert
-      const [errorAlert, setErrorAlert] = useState(""); 
+  componentDidMount() {
+    this.fetchData();
+    window.addEventListener('online', this.checkOnlineStatus);
+  }
 
-      useEffect(() => {
-        const style = document.createElement('style');
-        style.innerHTML = `
-          .alerts-container {
-            position: fixed;
-            top: 0px;
-            left: 20px;
-            width: 250px;
-            z-index: 1000;
-          }
-        `;
-        document.head.appendChild(style);
-        return () => {
-          document.head.removeChild(style);
-        };
-      }, []);
+  componentWillUnmount() {
+    window.removeEventListener('online', this.checkOnlineStatus);
+  }
 
-      useEffect(() => {
-        const fetchData = async () => {
-          const allEvents = await getEvents();
-          const eventsArray = Array.isArray(allEvents) ? allEvents : [];
-          const filtered = currentCity === "See all cities" 
-            ? eventsArray 
-            : eventsArray.filter(event => event.location === currentCity);
-          
-          setEvents(filtered.slice(0, currentNOE));
-          setAllLocations(extractLocations(eventsArray));
-        };
-
-        fetchData();
-      }, [currentCity, currentNOE]);
-
-      return (
-        <div className="App">
-          <div className="alerts-container">
-            {infoAlert.length ? <InfoAlert text={infoAlert} /> : null}
-            {errorAlert.length ? <ErrorAlert text={errorAlert} /> : null}
-          </div>
-
-          <CitySearch 
-            allLocations={allLocations} 
-            setCurrentCity={setCurrentCity}
-            setInfoAlert={setInfoAlert}
-          />
-          <NumberOfEvents 
-            setCurrentNOE={setCurrentNOE}
-            setErrorAlert={setErrorAlert} // <-- Pass the new setter function
-          />
-          <EventList events={events} />
-        </div>
-      );
+  checkOnlineStatus = () => {
+    if (navigator.onLine) {
+      this.setState({ warningAlert: '' });
+    } else {
+      this.setState({ warningAlert: 'You are offline! The displayed data may be from your last online session.' });
     }
+    this.fetchData();
+  };
 
-    export default App;
-    
+  fetchData = async () => {
+    const allEvents = await getEvents();
+    const filteredEvents =
+      this.state.currentCity === 'See all cities'
+        ? allEvents
+        : allEvents.filter((event) => event.location === this.state.currentCity);
+    this.setState({
+      events: filteredEvents.slice(0, this.state.currentNOE),
+      locations: extractLocations(allEvents),
+    });
+
+    if (!navigator.onLine) {
+      this.setState({ warningAlert: 'You are offline! The displayed data may be from your last online session.' });
+    } else {
+      this.setState({ warningAlert: '' });
+    }
+  };
+
+  setCurrentCity = (city) => {
+    this.setState({ currentCity: city }, this.fetchData);
+  };
+
+  setCurrentNOE = (number) => {
+    this.setState({ currentNOE: number }, this.fetchData);
+  };
+
+  render() {
+    // eslint-disable-next-line no-unused-vars
+    const { events, locations, currentNOE, infoAlert, errorAlert, warningAlert } = this.state;
+    return (
+      <div className="App">
+        <h1>Meet App</h1>
+        {infoAlert && <InfoAlert text={infoAlert} />}
+        {errorAlert && <ErrorAlert text={errorAlert} />}
+        {warningAlert && <WarningAlert text={warningAlert} />}
+        <CitySearch
+          allLocations={locations}
+          setCurrentCity={this.setCurrentCity}
+          setInfoAlert={(text) => this.setState({ infoAlert: text })}
+        />
+        <NumberOfEvents
+          setCurrentNOE={this.setCurrentNOE}
+          setErrorAlert={(text) => this.setState({ errorAlert: text })}
+        />
+        <EventList events={events} />
+      </div>
+    );
+  }
+}
+
+export default App;

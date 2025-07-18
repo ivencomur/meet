@@ -1,74 +1,62 @@
-    import { useState, useEffect } from 'react';
-    import CitySearch from './components/CitySearch';
-    import EventList from './components/EventList';
-    import NumberOfEvents from './components/NumberOfEvents';
-    import { getEvents, extractLocations } from './api';
-    // ErrorAlert is imported:
-    import { InfoAlert, ErrorAlert } from './components/Alert'; 
+    import { Component } from 'react';
 
-    import './App.css';
+    class Alert extends Component {
+      constructor(props) {
+        super(props);
+        this.color = null;
+        this.bgColor = null;
+      }
 
-    function App() {
-      const [events, setEvents] = useState([]);
-      const [currentNOE, setCurrentNOE] = useState(32);
-      const [allLocations, setAllLocations] = useState([]);
-      const [currentCity, setCurrentCity] = useState("See all cities");
-      const [infoAlert, setInfoAlert] = useState("");
-      // New state for the error alert
-      const [errorAlert, setErrorAlert] = useState(""); 
-
-      useEffect(() => {
-        const style = document.createElement('style');
-        style.innerHTML = `
-          .alerts-container {
-            position: fixed;
-            top: 0px;
-            left: 20px;
-            width: 250px;
-            z-index: 1000;
-          }
-        `;
-        document.head.appendChild(style);
-        return () => {
-          document.head.removeChild(style);
+      getStyle = () => {
+        return {
+          color: this.color,
+          backgroundColor: this.bgColor,
+          borderWidth: "2px",
+          borderStyle: "solid",
+          fontWeight: "bolder",
+          borderRadius: "7px",
+          borderColor: this.color,
+          textAlign: "center",
+          fontSize: "12px",
+          margin: "10px 0",
+          padding: "10px"
         };
-      }, []);
+      }
 
-      useEffect(() => {
-        const fetchData = async () => {
-          const allEvents = await getEvents();
-          const eventsArray = Array.isArray(allEvents) ? allEvents : [];
-          const filtered = currentCity === "See all cities" 
-            ? eventsArray 
-            : eventsArray.filter(event => event.location === currentCity);
-          
-          setEvents(filtered.slice(0, currentNOE));
-          setAllLocations(extractLocations(eventsArray));
-        };
-
-        fetchData();
-      }, [currentCity, currentNOE]);
-
-      return (
-        <div className="App">
-          <div className="alerts-container">
-            {infoAlert.length ? <InfoAlert text={infoAlert} /> : null}
-            {errorAlert.length ? <ErrorAlert text={errorAlert} /> : null}
+      render() {
+        return (
+          <div className="Alert">
+            <p style={this.getStyle()}>{this.props.text}</p>
           </div>
-
-          <CitySearch 
-            allLocations={allLocations} 
-            setCurrentCity={setCurrentCity}
-            setInfoAlert={setInfoAlert}
-          />
-          <NumberOfEvents 
-            setCurrentNOE={setCurrentNOE}
-            setErrorAlert={setErrorAlert} // <-- Pass the new setter function
-          />
-          <EventList events={events} />
-        </div>
-      );
+        );
+      }
     }
 
-    export default App;
+    class InfoAlert extends Alert {
+      constructor(props) {
+        super(props);
+        this.color = 'rgb(0, 0, 255)';
+        this.bgColor = 'rgb(220, 220, 255)';
+      }
+    }
+
+    class ErrorAlert extends Alert {
+      constructor(props) {
+        super(props);
+        this.color = 'rgb(255, 0, 0)';
+        this.bgColor = 'rgb(255, 220, 220)';
+      }
+    }
+
+    // New WarningAlert subclass
+    class WarningAlert extends Alert {
+      constructor(props) {
+        super(props);
+        this.color = 'rgb(255, 165, 0)';
+        this.bgColor = 'rgb(255, 248, 220)';
+      }
+    }
+
+    // Update export with WarningAlert
+    export { InfoAlert, ErrorAlert, WarningAlert };
     

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'; // Added useMemo
+import { useState, useEffect, useMemo } from 'react';
 import {
   PieChart,
   Pie,
@@ -9,10 +9,7 @@ import {
 
 const EventGenresChart = ({ events }) => {
   const [data, setData] = useState([]);
-
-  
   const genres = useMemo(() => ['React', 'JavaScript', 'Node', 'jQuery', 'Angular'], []);
-
   const colors = useMemo(() => ['#DD0000', '#00DD00', '#0000DD', '#DDDD00', '#DD00DD'], []);
 
   useEffect(() => {
@@ -30,7 +27,7 @@ const EventGenresChart = ({ events }) => {
     };
 
     setData(getData());
-  }, [events, genres]); 
+  }, [events, genres]);
 
   const renderCustomizedLabel = ({ cx, cy, midAngle, outerRadius, percent, index }) => {
     const RADIAN = Math.PI / 180;
@@ -52,20 +49,20 @@ const EventGenresChart = ({ events }) => {
   };
 
   return (
-    <ResponsiveContainer width="99%" height={400}>
+    <ResponsiveContainer width="250%" height={600}>
       <PieChart>
         <Pie
           data={data}
           dataKey="value"
           labelLine={false}
           label={renderCustomizedLabel}
-          outerRadius={150}
+          outerRadius={99}
         >
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
           ))}
         </Pie>
-        <Legend verticalAlign="bottom" align="center" />
+        <Legend verticalAlign="center" align="center" />
       </PieChart>
     </ResponsiveContainer>
   );

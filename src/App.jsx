@@ -64,7 +64,6 @@ class App extends Component {
   };
 
   render() {
-    // eslint-disable-next-line no-unused-vars
     const { events, locations, currentNOE, infoAlert, errorAlert, warningAlert } = this.state;
     return (
       <div className="App">
@@ -73,22 +72,24 @@ class App extends Component {
         {errorAlert && <ErrorAlert text={errorAlert} />}
         {warningAlert && <WarningAlert text={warningAlert} />}
 
-        <CitySearch
-          allLocations={locations}
-          setCurrentCity={this.setCurrentCity}
-          setInfoAlert={(text) => this.setState({ infoAlert: text })}
-        />
-        <NumberOfEvents
-          setCurrentNOE={this.setCurrentNOE}
-          setErrorAlert={(text) => this.setState({ errorAlert: text })}
-        />
+        <div className="main-content-wrapper">
+          <CitySearch
+            allLocations={locations}
+            setCurrentCity={this.setCurrentCity}
+            setInfoAlert={(text) => this.setState({ infoAlert: text })}
+          />
+          <NumberOfEvents
+            setCurrentNOE={this.setCurrentNOE}
+            setErrorAlert={(text) => this.setState({ errorAlert: text })}
+          />
 
-        <div className="charts-container">
-          <CityEventsChart allLocations={locations} events={events} />
-          <EventGenresChart events={events} />
+          <div className="charts-container">
+            <CityEventsChart allLocations={locations} events={events} />
+            <EventGenresChart events={events} />
+          </div>
+
+          <EventList events={events} />
         </div>
-
-        <EventList events={events} />
       </div>
     );
   }

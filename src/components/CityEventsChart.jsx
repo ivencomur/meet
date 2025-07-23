@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'; // Removed React import
+import { useState, useEffect } from 'react';
 import {
   ScatterChart,
   Scatter,
@@ -12,7 +12,6 @@ const CityEventsChart = ({ allLocations, events }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    // Move getData inside useEffect or use useCallback for stability
     const getData = () => {
       const data = allLocations.map((location) => {
         const count = events.filter((event) => event.location === location).length;
@@ -23,7 +22,7 @@ const CityEventsChart = ({ allLocations, events }) => {
     };
 
     setData(getData());
-  }, [allLocations, events]); // Changed dependencies to allLocations and events directly
+  }, [allLocations, events]);
 
   return (
     <ResponsiveContainer width="99%" height={400}>
@@ -42,7 +41,7 @@ const CityEventsChart = ({ allLocations, events }) => {
           name="City"
           angle={60}
           interval={0}
-          tick={{ dx: 20, dy: 40, fontSize: 14 }}
+          tick={{ dx: 20, dy: 40, fontSize: 17 }}
         />
         <YAxis
           type="number"

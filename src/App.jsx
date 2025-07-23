@@ -3,6 +3,8 @@ import './App.css';
 import EventList from './components/EventList';
 import CitySearch from './components/CitySearch';
 import NumberOfEvents from './components/NumberOfEvents';
+import CityEventsChart from './components/CityEventsChart';
+import EventGenresChart from './components/EventGenresChart';
 import { getEvents, extractLocations } from './api';
 import { InfoAlert, ErrorAlert, WarningAlert } from './components/Alert';
 
@@ -62,7 +64,6 @@ class App extends Component {
   };
 
   render() {
-    // eslint-disable-next-line no-unused-vars
     const { events, locations, currentNOE, infoAlert, errorAlert, warningAlert } = this.state;
     return (
       <div className="App">
@@ -70,16 +71,25 @@ class App extends Component {
         {infoAlert && <InfoAlert text={infoAlert} />}
         {errorAlert && <ErrorAlert text={errorAlert} />}
         {warningAlert && <WarningAlert text={warningAlert} />}
-        <CitySearch
-          allLocations={locations}
-          setCurrentCity={this.setCurrentCity}
-          setInfoAlert={(text) => this.setState({ infoAlert: text })}
-        />
-        <NumberOfEvents
-          setCurrentNOE={this.setCurrentNOE}
-          setErrorAlert={(text) => this.setState({ errorAlert: text })}
-        />
-        <EventList events={events} />
+
+        <div className="main-content-wrapper">
+          <CitySearch
+            allLocations={locations}
+            setCurrentCity={this.setCurrentCity}
+            setInfoAlert={(text) => this.setState({ infoAlert: text })}
+          />
+          <NumberOfEvents
+            setCurrentNOE={this.setCurrentNOE}
+            setErrorAlert={(text) => this.setState({ errorAlert: text })}
+          />
+
+          <div className="charts-container">
+            <CityEventsChart allLocations={locations} events={events} />
+            <EventGenresChart events={events} />
+          </div>
+
+          <EventList events={events} />
+        </div>
       </div>
     );
   }

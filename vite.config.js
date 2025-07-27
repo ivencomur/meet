@@ -43,7 +43,7 @@ export default defineConfig({
         "background_color": "#ffffff"
       },
       srcDir: 'src',
-      filename: 'service-worker.js', // Ensure it's accessible in production
+      filename: 'service-worker.js', 
       registerType: 'autoUpdate',
       workbox: {
         runtimeCaching: [
